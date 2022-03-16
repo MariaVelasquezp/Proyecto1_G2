@@ -1,0 +1,117 @@
+--Group 2 
+--calculator
+----------------------------------------------------
+LIBRARY IEEE;
+USE ieee.std_logic_1164.all;
+----------------------------------------------------
+ENTITY calculator IS
+	PORT(		switches_op	:		IN 		STD_LOGIC_VECTOR(1 DOWNTO 0);
+				switches_a	:		IN 		STD_LOGIC_VECTOR(3 DOWNTO 0);
+				switches_b	:		IN 		STD_LOGIC_VECTOR(3 DOWNTO 0);
+				ssegment1	:		OUT		STD_LOGIC_VECTOR(6 DOWNTO 0);
+				ssegment2	:		OUT		STD_LOGIC_VECTOR(6 DOWNTO 0);
+				ssegment3	:		OUT		STD_LOGIC_VECTOR(6 DOWNTO 0);
+				ssegment4	:		OUT		STD_LOGIC_VECTOR(6 DOWNTO 0));
+				END ENTITY calculator;
+-----------------------------------------------------
+ARCHITECTURE behaviour OF calculator IS
+
+SIGNAL comparator 	 : STD_LOGIC;
+SIGNAL comparator2	 : STD_LOGIC;
+SIGNAL number_a		 : STD_LOGIC_VECTOR(6 DOWNTO 0);
+SIGNAL number_b		 : STD_LOGIC_VECTOR(6 DOWNTO 0);
+SIGNAL operationsel 	 : STD_LOGIC_VECTOR(1 DOWNTO 0);
+SIGNAL result_multi	 : STD_LOGIC_VECTOR(7 DOWNTO 0);
+SIGNAL result_add	 	 : STD_LOGIC_VECTOR(7 DOWNTO 0);
+SIGNAL result_sub	 	 : STD_LOGIC_VECTOR(7 DOWNTO 0);
+SIGNAL seg0_multi		 : STD_LOGIC_VECTOR(3 DOWNTO 0);
+SIGNAL seg1_multi		 : STD_LOGIC_VECTOR(3 DOWNTO 0);
+SIGNAL seg0_add		 : STD_LOGIC_VECTOR(3 DOWNTO 0);
+SIGNAL seg1_add	 	 : STD_LOGIC_VECTOR(3 DOWNTO 0);
+SIGNAL seg0_subs	 	 : STD_LOGIC_VECTOR(3 DOWNTO 0);
+SIGNAL seg1_subs	 	 : STD_LOGIC_VECTOR(3 DOWNTO 0);
+SIGNAL final0_multi   : STD_LOGIC_VECTOR(6 DOWNTO 0);
+SIGNAL final1_multi   : STD_LOGIC_VECTOR(6 DOWNTO 0);
+SIGNAL final0_add  	 : STD_LOGIC_VECTOR(6 DOWNTO 0);
+SIGNAL final1_add  	 : STD_LOGIC_VECTOR(6 DOWNTO 0);
+SIGNAL final0_subs  	 : STD_LOGIC_VECTOR(6 DOWNTO 0);
+SIGNAL final1_subs  	 : STD_LOGIC_VECTOR(6 DOWNTO 0);
+SIGNAL vect_RE 		 : STD_LOGIC_VECTOR(1 DOWNTO 0);
+
+BEGIN
+	opselection:ENTITY work.switch_selector
+		PORT MAP (	entry=>switches_op,
+						flag=>operationsel);
+	review1:ENTITY work.more_than
+		PORT MAP (	lg=>comparator,
+						x=>switches_a);
+	review2:ENTITY work.more_than
+		PORT MAP (	lg=>comparator2,
+						x=>switches_b);			
+	segment1:ENTITY work.bin_to_sseg
+		PORT MAP (	bin=>switches_a,
+						sseg=>number_a);
+	segment2:ENTITY work.bin_to_sseg
+		PORT MAP (	bin =>switches_b,
+						sseg=>number_b);
+				
+	multi:ENTITY work.multiplication
+		PORT MAP	(		x=>switches_a,		
+							y=>switches_b,									
+							p=>result_multi);
+	addition:ENTITY work.suma
+		PORT MAP	(		num_A=>switches_a,		
+							num_B=>switches_b,			
+							result=>result_add);
+	substraction:ENTITY work.resta
+		PORT MAP	(		num_A=>switches_a,		
+							num_B=>switches_b,			
+							result=>result_sub,
+							evalRE=>vect_RE);
+	BCD:ENTITY work.BCD
+		PORT MAP	(			result=>result_multi,		
+								dec=>seg1_multi,									
+								uni=>seg0_multi);
+	BCD2:ENTITY work.BCD
+		PORT MAP	(			result=>result_add,		
+								dec=>seg1_add,									
+								uni=>seg0_add);
+	BCD3:ENTITY work.BCD
+		PORT MAP	(			result=>result_sub,		
+								dec=>seg1_subs,									
+								uni=>seg0_subs);
+								
+	change1:ENTITY work.bin_to_sseg
+		PORT MAP (	bin=>seg1_multi,
+						sseg=>final1_multi);
+	change2:ENTITY work.bin_to_sseg
+		PORT MAP (	bin=>seg0_multi,
+						sseg=>final0_multi);
+	change3:ENTITY work.bin_to_sseg
+		PORT MAP (	bin=>seg1_add,
+						sseg=>final1_add);
+	change4:ENTITY work.bin_to_sseg
+		PORT MAP (	bin=>seg0_add,
+						sseg=>final0_add);
+	change5:ENTITY work.bin_to_sseg
+		PORT MAP (	bin=>seg1_subs,
+						sseg=>final1_subs);
+	change6:ENTITY work.bin_to_sseg
+		PORT MAP (	bin=>seg0_subs,
+						sseg=>final0_subs);
+	ssegment3<=
+				number_a WHEN comparator='1' ELSE "0000110";
+	ssegment4<=
+				number_b WHEN comparator2='1' ELSE "0000110";
+	ssegment1<=
+				final0_multi WHEN (operationsel="10")AND(comparator='1' AND comparator2='1') ELSE
+				final0_add WHEN (operationsel="11")AND(comparator='1' AND comparator2='1') ELSE
+				final0_subs WHEN ((operationsel="01")AND(comparator='1' AND comparator2='1')) ELSE
+				"0000110";
+	ssegment2<=
+				final1_multi WHEN (operationsel="10")AND(comparator='1' AND comparator2='1') ELSE 
+				final1_add WHEN (operationsel="11")AND(comparator='1' AND comparator2='1') ELSE 
+				"0111111" WHEN ((operationsel="01")AND(comparator='1' AND comparator2='1')AND(vect_RE(0)='0')) ELSE
+				"1111111" WHEN ((operationsel="01")AND(comparator='1' AND comparator2='1')AND(vect_RE(0)='1')) ELSE 
+				"0000110";
+END behaviour;

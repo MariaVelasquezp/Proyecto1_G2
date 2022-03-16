@@ -1,0 +1,138 @@
+LIBRARY IEEE;
+USE ieee.std_logic_1164.all;
+USE ieee.numeric_std.all;
+------------------------------------------------------------------------------------------------------------------
+ENTITY multiplier IS
+	PORT(		x			:	IN		STD_LOGIC_VECTOR(3 DOWNTO 0);
+				y			:	IN		STD_LOGIC_VECTOR(3 DOWNTO 0);			
+				p			: 	OUT 	STD_LOGIC_VECTOR(7 DOWNTO 0));
+
+END ENTITY multiplier;
+------------------------------------------------------------------------------------------------------------------
+ARCHITECTURE structural OF multiplier IS
+SIGNAL cout																								:	STD_LOGIC_VECTOR(11 DOWNTO 0);
+SIGNAL e 																 								: 	STD_LOGIC_VECTOR(14 DOWNTO 0);
+SIGNAL s																									:  STD_LOGIC_VECTOR(11 DOWNTO 0);
+------------------------------------------------------------------------------------------------------------------
+BEGIN
+	e(0) 	<= y(0) AND x(1);
+	e(1) 	<= y(0) AND x(2);
+	e(2) 	<= y(0) AND x(3);
+	e(3) 	<= y(1) AND x(0);
+	e(4) 	<= y(1) AND x(1);
+	e(5) 	<= y(1) AND x(2);
+	e(6) 	<= y(1) AND x(3);
+	e(7) 	<= y(2) AND x(0);
+	e(8) 	<= y(2) AND x(1);
+	e(9) 	<= y(2) AND x(2);
+	e(10) <= y(2) AND x(3);
+	e(11) <= y(3) AND x(0);
+	e(12) <= y(3) AND x(1);
+	e(13) <= y(3) AND x(2);
+	e(14) <= y(3) AND x(3);		
+	p(0) 	<= y(0) AND x(0);
+	p(1)	<= s(0);
+	p(2)	<= s(4);
+	p(3)	<= s(8);
+	p(4)	<= s(9);
+	p(5)	<= s(10);
+	p(6)	<= s(11);
+	p(7)  <= cout(11);
+	
+	-- Component Instantiation
+	--y0x1 + y1x0 (P1)
+	fullader_one_bitModule_0: ENTITY work.fullader_one_bit
+	PORT MAP(	A		=>	e(0),
+					B		=> e(3),
+					Cin	=> '0',
+					S		=> s(0),
+					Cout	=> cout(0));
+					
+	--y0x2 + y1x1	(P2_1)
+	fullader_one_bitModule_1: ENTITY work.fullader_one_bit
+	PORT MAP(	A		=>	e(4),
+					B		=> e(1),
+					Cin	=> cout(0),
+					S		=> s(1),
+					Cout	=> cout(1));
+					
+	--y0x3 + y1x2	(P3_1)
+	fullader_one_bitModule_2: ENTITY work.fullader_one_bit
+	PORT MAP(	A		=>	e(8),
+					B		=> e(11),
+					Cin	=> cout(1),
+					S		=> s(2),
+					Cout	=> cout(2));
+					
+	--0 + y3x1 (P4_1)
+	fullader_one_bitModule_3: ENTITY work.fullader_one_bit
+	PORT MAP(	A		=>	'0',
+					B		=> e(12),
+					Cin	=> cout(2),
+					S		=> s(3),
+					Cout	=> cout(3));
+					
+	--s(1) + y0x2 (P2_2)
+	fullader_one_bitModule_4: ENTITY work.fullader_one_bit
+	PORT MAP(	A		=>	s(1),
+					B		=> e(7),
+					Cin	=> cout(3),
+					S		=> s(4),
+					Cout	=> cout(4));	
+					
+	--s(2) + y1x2	(P3_2)
+	fullader_one_bitModule_5: ENTITY work.fullader_one_bit
+	PORT MAP(	A		=>	s(2),
+					B		=> e(5),
+					Cin	=> cout(4),
+					S		=> s(5),
+					Cout	=> cout(5));
+				
+	--s(3) + y2x2 (P4_2)
+	fullader_one_bitModule_6: ENTITY work.fullader_one_bit
+	PORT MAP(	A		=>	s(3),
+					B		=> e(9),
+					Cin	=> cout(5),
+					S		=> s(6),
+					Cout	=> cout(6));	
+
+	--s(3) + y3x2 (P5_1)
+	fullader_one_bitModule_7: ENTITY work.fullader_one_bit
+	PORT MAP(	A		=>	cout(6),
+					B		=> e(13),
+					Cin	=> '0',
+					S		=> s(7),
+					Cout	=> cout(7));					
+
+	--s(5) + y0x3 (P3_3)
+	fullader_one_bitModule_8: ENTITY work.fullader_one_bit
+	PORT MAP(	A		=>	s(5),
+					B		=> e(2),
+					Cin	=> '0',
+					S		=> s(8),
+					Cout	=> cout(8));	
+	
+	--s(6) + y1x3 (P4_3)
+	fullader_one_bitModule_9: ENTITY work.fullader_one_bit
+	PORT MAP(	A		=>	s(6),
+					B		=> e(6),
+					Cin	=> cout(8),
+					S		=> s(9),
+					Cout	=> cout(9));		
+
+	--s(7) + y2x3 (P5_2)
+	fullader_one_bitModule_10: ENTITY work.fullader_one_bit
+	PORT MAP(	A		=>	s(7),
+					B		=> e(10),
+					Cin	=> cout(9),
+					S		=> s(10),
+					Cout	=> cout(10));	
+					
+	--cout10 + y3x3 (P6)
+	fullader_one_bitModule_11: ENTITY work.fullader_one_bit
+	PORT MAP(	A		=>	cout(7),
+					B		=> e(14),
+					Cin	=> cout(10),
+					S		=> s(11),
+					Cout	=> cout(11));
+END ARCHITECTURE structural;

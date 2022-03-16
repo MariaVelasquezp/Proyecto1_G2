@@ -1,0 +1,65 @@
+ LIBRARY IEEE;
+USE ieee.std_logic_1164.all;
+-------------------------------------------------------
+ENTITY op_tb_resta IS
+END ENTITY op_tb_resta;
+-------------------------------------------------------
+ARCHITECTURE testbench OF op_tb_resta IS
+	SIGNAL inputa_tb										: STD_LOGIC_VECTOR(3 DOWNTO 0);		
+	SIGNAL inputb_tb										: STD_LOGIC_VECTOR(3 DOWNTO 0);		
+	SIGNAL p_tb												: STD_LOGIC_VECTOR(7 DOWNTO 0);
+	SIGNAL re												: STD_LOGIC_VECTOR(1 DOWNTO 0);		
+-------------------------------------------------------
+BEGIN
+	--CLOCK GENERATION:------------------------
+	--clk_tb <= not clk_tb after 10ns; -- 50MHz clock generation
+	--RESET GENERATION:------------------------
+	--rst_tb <= '0' after 150ns;
+	
+	DUT:	ENTITY work.resta
+	PORT MAP(	num_A			=>		inputa_tb,
+					num_B			=>		inputb_tb,			
+					result		=>		p_tb,
+					evalRE		=>		re);
+	
+	--Input signal generation
+	signal_generation: PROCESS
+	BEGIN
+	
+	-- TEST VECTOR 1
+		inputa_tb 	<= "1000";
+		inputb_tb 	<= "1001";
+		WAIT FOR 200 ns;
+		-- TEST VECTOR 2
+		inputa_tb 	<= "0010";
+		inputb_tb 	<= "0010";
+		WAIT FOR 200 ns;
+		-- TEST VECTOR 3
+		inputa_tb 	<= "0100";
+		inputb_tb 	<= "0011";
+		WAIT FOR 200 ns;
+		-- TEST VECTOR 4
+		inputa_tb 	<= "0110";
+		inputb_tb 	<= "0111";
+		WAIT FOR 200 ns;
+		-- TEST VECTOR 5
+		inputa_tb 	<= "0101";
+		inputb_tb 	<= "1001";
+		WAIT FOR 200 ns;
+		-- TEST VECTOR 6
+		inputa_tb 	<= "0000";
+		inputb_tb 	<= "1010";
+		WAIT FOR 200 ns;
+		-- TEST VECTOR 7
+		inputa_tb 	<= "0000";
+		inputb_tb 	<= "1001";
+		WAIT FOR 200 ns;
+		-- TEST VECTOR 8
+		inputa_tb 	<= "0010";
+		inputb_tb 	<= "0000";
+		WAIT FOR 200 ns;
+		
+		
+	END PROCESS signal_generation;
+
+END ARCHITECTURE testbench;

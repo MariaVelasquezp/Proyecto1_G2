@@ -1,0 +1,15 @@
+LIBRARY IEEE;
+USE ieee.std_logic_1164.all;
+USE ieee.std_logic_unsigned.all;
+-----------------------------------------
+ENTITY more_than IS
+	PORT (	x					:		IN		STD_LOGIC_VECTOR(3 DOWNTO 0);
+				lg					:		OUT	STD_LOGIC);
+END ENTITY;
+--------------------------------------------
+ARCHITECTURE gatelevel OF more_than IS
+BEGIN
+	lg<=
+		'1' WHEN x<"1010" ELSE
+		'0';
+END ARCHITECTURE;

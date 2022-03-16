@@ -1,0 +1,62 @@
+--Group 2 
+--calculator
+----------------------------------------------------
+LIBRARY IEEE;
+USE ieee.std_logic_1164.all;
+----------------------------------------------------
+ENTITY calculator IS
+	PORT(		group0		:		IN 		STD_LOGIC_VECTOR(1 DOWNTO 0);
+				group1		:		IN 		STD_LOGIC_VECTOR(5 DOWNTO 2);
+				group2		:		IN 		STD_LOGIC_VECTOR(9 DOWNTO 6);
+				ssegment1	:		OUT		STD_LOGIC_VECTOR(6 DOWNTO 0);
+				ssegment2	:		OUT		STD_LOGIC_VECTOR(6 DOWNTO 0);
+				ssegment3	:		OUT		STD_LOGIC_VECTOR(6 DOWNTO 0);
+				ssegment4	:		OUT		STD_LOGIC_VECTOR(6 DOWNTO 0));
+				END ENTITY calculator;
+-----------------------------------------------------
+ARCHITECTURE behaviour OF calculator IS
+
+SIGNAL comparator 	 : STD_LOGIC;
+SIGNAL comparator2	 : STD_LOGIC;
+SIGNAL cin_multi		 : STD_LOGIC;
+SIGNAL seven_1		 	 : STD_LOGIC_VECTOR(6 DOWNTO 0);
+SIGNAL seven_2			 : STD_LOGIC_VECTOR(6 DOWNTO 0);
+SIGNAL operationsel 	 : STD_LOGIC_VECTOR(1 DOWNTO 0);
+SIGNAL a_multi		 	 : STD_LOGIC_VECTOR(7 DOWNTO 0);
+SIGNAL b_multi		 	 : STD_LOGIC_VECTOR(7 DOWNTO 0);
+SIGNAL result_1	 	 : STD_LOGIC_VECTOR(7 DOWNTO 0);
+
+
+BEGIN
+	opselection:ENTITY work.switch_selector
+		PORT MAP (	entry=>group0,
+						flag=>operationsel);
+	review1:ENTITY work.more_than
+		PORT MAP (	lg=>comparator,
+						x=>group1);
+	review2:ENTITY work.more_than
+		PORT MAP (	lg=>comparator2,
+						x=>group2);			
+	segment1:ENTITY work.bin_to_sseg
+		PORT MAP (	bin=>group1,
+						sseg=>seven_1);
+	segment2:ENTITY work.bin_to_sseg
+		PORT MAP (	bin =>group2,
+						sseg=>seven_2);
+	ssegment3<=
+				seven_1 WHEN comparator='1' ELSE "0000110";
+	ssegment4<=
+				seven_2 WHEN comparator2='1' ELSE "0000110";
+	ssegment2<=
+				"1111111" WHEN (comparator='1' AND comparator2='1') ELSE "0000110";
+	ssegment1<=
+				"1111111" WHEN (comparator='1' AND comparator2='1') ELSE "0000110";
+				
+	multi:ENTITY work.multiplier
+		PORT MAP	(		x=>group1,		
+							y=>group2,			
+							cin=>cin_multi,		
+							a=>a_multi,		
+							b=>b_multi,					
+							p=>result_1);
+END behaviour;

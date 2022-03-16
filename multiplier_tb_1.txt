@@ -1,0 +1,67 @@
+-------------------------------------------------------
+-- fullader_one_bit can add in binary two inputs 
+--- (of 1 bit each one) taking into account the count.
+-------------------------------------------------------
+LIBRARY IEEE;
+USE ieee.std_logic_1164.all;
+-------------------------------------------------------
+ENTITY multiplier_tb_1 IS
+END ENTITY multiplier_tb_1;
+-------------------------------------------------------
+ARCHITECTURE testbench OF multiplier_tb_1 IS
+	SIGNAL inputa_tb	: STD_LOGIC_VECTOR(3 DOWNTO 0);		
+	SIGNAL inputb_tb	: STD_LOGIC_VECTOR(3 DOWNTO 0);		
+	SIGNAL p_tb		: STD_LOGIC_VECTOR(7 DOWNTO 0);	
+-------------------------------------------------------
+BEGIN
+	DUT:	ENTITY work.multiplier
+	PORT MAP(	x			=>		inputa_tb,
+					y			=>		inputb_tb,			
+					p			=>		p_tb);
+	
+	--Input signal generation
+	signal_generation: PROCESS
+	BEGIN
+	
+	-- TEST VECTOR 1
+		inputa_tb 	<= "1001";
+		inputb_tb 	<= "0000";
+		WAIT FOR 200 ns;
+		-- TEST VECTOR 2
+		inputa_tb 	<= "1001";
+		inputb_tb 	<= "0001";
+		WAIT FOR 200 ns;
+		-- TEST VECTOR 3
+		inputa_tb 	<= "1001";
+		inputb_tb 	<= "0010";
+		WAIT FOR 200 ns;
+		-- TEST VECTOR 4
+		inputa_tb 	<= "1001";
+		inputb_tb 	<= "0011";
+		WAIT FOR 200 ns;
+		-- TEST VECTOR 5
+		inputa_tb 	<= "1001";
+		inputb_tb 	<= "0100";
+		WAIT FOR 200 ns;
+		-- TEST VECTOR 6
+		inputa_tb 	<= "1001";
+		inputb_tb 	<= "0101";
+		WAIT FOR 200 ns;
+		-- TEST VECTOR 7
+		inputa_tb 	<= "1001";
+		inputb_tb 	<= "0110";
+		WAIT FOR 200 ns;
+		-- TEST VECTOR 8
+		inputa_tb 	<= "1001";
+		inputb_tb 	<= "0111";
+		WAIT FOR 200 ns;
+		-- TEST VECTOR 9
+		inputa_tb 	<= "1001";
+		inputb_tb 	<= "1000";
+		WAIT FOR 200 ns;
+		-- TEST VECTOR 10
+		inputa_tb 	<= "1001";
+		inputb_tb 	<= "1001";
+		WAIT FOR 200 ns;
+	END PROCESS signal_generation;
+END ARCHITECTURE testbench;

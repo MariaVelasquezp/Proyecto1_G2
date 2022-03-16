@@ -1,0 +1,54 @@
+-------------------------------------------------------
+-- fullader_one_bit can add in binary two inputs 
+--- (of 1 bit each one) taking into account the count.
+-------------------------------------------------------
+LIBRARY IEEE;
+USE ieee.std_logic_1164.all;
+-------------------------------------------------------
+ENTITY op_tb_1 IS
+END ENTITY op_tb_1;
+-------------------------------------------------------
+ARCHITECTURE testbench OF op_tb_1 IS
+	SIGNAL inputa_tb										: STD_LOGIC_VECTOR(3 DOWNTO 0);		
+	SIGNAL inputb_tb										: STD_LOGIC_VECTOR(3 DOWNTO 0);		
+	SIGNAL p_tb												: STD_LOGIC_VECTOR(7 DOWNTO 0);	
+-------------------------------------------------------
+BEGIN
+	--CLOCK GENERATION:------------------------
+	--clk_tb <= not clk_tb after 10ns; -- 50MHz clock generation
+	--RESET GENERATION:------------------------
+	--rst_tb <= '0' after 150ns;
+	
+	DUT:	ENTITY work.suma
+	PORT MAP(	num_A			=>		inputa_tb,
+					num_B			=>		inputb_tb,			
+					result		=>		p_tb);
+	
+	--Input signal generation
+	signal_generation: PROCESS
+	BEGIN
+	
+	-- TEST VECTOR 1
+		inputa_tb 	<= "1000";
+		inputb_tb 	<= "1001";
+		WAIT FOR 200 ns;
+		-- TEST VECTOR 2
+		inputa_tb 	<= "0010";
+		inputb_tb 	<= "0010";
+		WAIT FOR 200 ns;
+		-- TEST VECTOR 3
+		inputa_tb 	<= "0100";
+		inputb_tb 	<= "0011";
+		WAIT FOR 200 ns;
+		-- TEST VECTOR 4
+		inputa_tb 	<= "0110";
+		inputb_tb 	<= "0111";
+		WAIT FOR 200 ns;
+		-- TEST VECTOR 5
+		inputa_tb 	<= "0101";
+		inputb_tb 	<= "1001";
+		WAIT FOR 200 ns;
+		
+	END PROCESS signal_generation;
+
+END ARCHITECTURE testbench;

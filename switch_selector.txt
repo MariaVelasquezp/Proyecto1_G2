@@ -1,0 +1,19 @@
+--Group 2 
+--switch selector
+----------------------------------------------------
+LIBRARY IEEE;
+USE ieee.std_logic_1164.all;
+-----------------------------------------------------
+ENTITY switch_selector IS
+	PORT(		entry		:		IN 		STD_LOGIC_VECTOR(1 DOWNTO 0);
+				flag		:		OUT		STD_LOGIC_VECTOR(1 DOWNTO 0));
+END ENTITY switch_selector;
+-----------------------------------------------------
+ARCHITECTURE behaviour OF switch_selector IS
+BEGIN
+		flag <=
+			"11" 	WHEN (entry= "11") ELSE --add
+			"01"	WHEN (entry= "01") ELSE --subst
+			"10" 	WHEN (entry= "00" OR entry= "10") ELSE --multi
+			"00";
+END behaviour;
